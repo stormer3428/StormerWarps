@@ -2,8 +2,11 @@ api-version : 1.16
 main: fr.stormer3428.warps.Warps
 author: stormer3428
 name: "StormerWarps"
+depend: [ObsidianMC]
+softdepend: [Multiverse-Core]
 api : []
-version: 0.0.6
+version: 1.0.20-1.19.3
+load: POSTWORLD
 commands:
   warp:
     description: "Teleports you to your warp"
@@ -13,5 +16,5 @@ commands:
     description: "Sets your warp"
   delwarp:
     description: "Deletes a warp"
-  swreload:
-    description: "reloads the config"
+  stormerwarps:
+  swarps:
