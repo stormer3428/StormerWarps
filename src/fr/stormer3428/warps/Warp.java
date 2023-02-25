@@ -1,9 +1,7 @@
 package fr.stormer3428.warps;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +25,7 @@ public class Warp {
 	public Warp(@Nonnull Location loc, String n) {
 		this(loc, n, false);
 	}
-	
+
 	public Warp(@Nonnull Location loc, String n, boolean opOnly) {
 		for(Warp warp : all) {
 			if(warp.name == n) {
@@ -44,10 +42,12 @@ public class Warp {
 		saveToConfig(this);
 		all.add(this);
 	}
-	
+
 	private static void saveToConfig(Warp warp) {
+		OMCLogger.debug("saving to config : " + warp);
 		String path = "warps." + warp.name + ".";
 		FileConfiguration config = OMCPlugin.i.getConfig();
+		OMCLogger.debug("config : " + config);
 		config.set(path + "x", warp.location.getX());
 		config.set(path + "y", warp.location.getY());
 		config.set(path + "z", warp.location.getZ());
@@ -57,25 +57,24 @@ public class Warp {
 		config.set(path + "opOnly", warp.opOnly);
 		OMCPlugin.i.loadConfig();
 	}
-	
+
 	public static void deleteWarp(Warp warp) {
 		String path = "warps." + warp.name;
 		OMCPlugin.i.getConfig().set(path, null);
 		OMCPlugin.i.loadConfig();
 		all.remove(warp);
 	}
-	
+
 	public void delete() {
 		deleteWarp(this);
 	}
-	
+
 	public static Warp fromName(String name) {
-		for(Warp warp : all) {
-			if(warp.getName().equals(name)) return warp;
-		}
+		for(Warp warp : all) if(warp.getName().equals(name)) return warp;
+		for(Warp warp : all) if(warp.getName().equalsIgnoreCase(name)) return warp;
 		return null;
 	}
-	
+
 	public static List<Warp> getWarps(boolean isOP) {
 		if(isOP) return all;
 		List<Warp> warps = new ArrayList<>();
@@ -84,12 +83,12 @@ public class Warp {
 		}
 		return warps;
 	}
-	
+
 	public void warp(Player p) {
 		OMCLogger.normal(p, Lang.WARP.toString().replace("<%WARP>", getName()));
 		p.teleport(getLocation());
 	}
-	
+
 	public Location getLocation() {
 		return this.location;
 	}
@@ -120,99 +119,97 @@ public class Warp {
 	}
 
 	public static void loadFromConfig() {
+		OMCLogger.debug("loading warps from config");
 		Warp.all.clear();
 		FileConfiguration config = OMCPlugin.i.getConfig();
-		Set<String> keys = config.getKeys(true);
-		Set<String> warps = new HashSet<>();
 
-		for(String s : keys) {
-			String[] args = s.split("\\.");
-			if(args.length > 1 && args[0].equals("warps")) {
-				if(!warps.contains(args[1])) warps.add(args[1]);
-			}
-		}
-
-		for(String warp : warps) {
+		OMCLogger.debug("config : " + config);
+		OMCLogger.debug("looping through keys");
+		for(String warp : config.getKeys(false)) {
 			String path = "warps." + warp + ".";
-
-			OMCLogger.systemNormal("Attempting to load warp ("+path+")");
-
-			String sx = config.getString(path + "x");
-			String sy = config.getString(path + "y");
-			String sz = config.getString(path + "z");
-			String syaw = config.getString(path + "yaw");
-			String spitch = config.getString(path + "pitch");
-			String sworld = config.getString(path + "world");
-			String sOpOnly = config.getString(path + "opOnly");
-
-			double x;
 			try {
-				x = Double.parseDouble(sx);
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid x");
-				continue;
-			}
 
-			double y;
-			try {
-				y = Double.parseDouble(sy); 
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid y");
-				continue;
-			}
+				OMCLogger.debug("Attempting to load warp ("+path+")");
 
-			double z;
-			try {
-				z = Double.parseDouble(sz);
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid z");
-				continue;
-			}
+				String sx = config.getString(path + "x");
+				String sy = config.getString(path + "y");
+				String sz = config.getString(path + "z");
+				String syaw = config.getString(path + "yaw");
+				String spitch = config.getString(path + "pitch");
+				String sworld = config.getString(path + "world");
+				String sOpOnly = config.getString(path + "opOnly");
 
-			float yaw;
-			try {
-				yaw = Float.parseFloat(syaw);
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid yaw");
-				continue;
-			}
-
-			float pitch;
-			try {
-				pitch = Float.parseFloat(spitch);
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid pitch");
-				continue;
-			}
-
-			boolean opOnly;
-			try {
-				opOnly = Boolean.parseBoolean(sOpOnly);
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid opOnly");
-				continue;
-			}
-
-			World world;
-			try {
-				world = Bukkit.getWorld(sworld);
-
-				if(world == null) OMCLogger.systemError("invalid world name for warp : (" + path + ")");
-				else {
-					Warp h = new Warp(new Location(world, x, y, z, yaw, pitch), warp, opOnly);
-					OMCLogger.systemNormal("Created warp");
-					OMCLogger.systemNormal(h.toString());
+				double x;
+				try {
+					x = Double.parseDouble(sx);
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid x");
+					continue;
 				}
-			} catch (Exception e) {
-				OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
-				OMCLogger.systemError("invalid world");
-				continue;
+
+				double y;
+				try {
+					y = Double.parseDouble(sy); 
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid y");
+					continue;
+				}
+
+				double z;
+				try {
+					z = Double.parseDouble(sz);
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid z");
+					continue;
+				}
+
+				float yaw;
+				try {
+					yaw = Float.parseFloat(syaw);
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid yaw");
+					continue;
+				}
+
+				float pitch;
+				try {
+					pitch = Float.parseFloat(spitch);
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid pitch");
+					continue;
+				}
+
+				boolean opOnly;
+				try {
+					opOnly = Boolean.parseBoolean(sOpOnly);
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid opOnly");
+					continue;
+				}
+
+				World world;
+				try {
+					world = Bukkit.getWorld(sworld);
+
+					if(world == null) OMCLogger.systemError("invalid world name for warp : (" + path + ")");
+					else {
+						Warp h = new Warp(new Location(world, x, y, z, yaw, pitch), warp, opOnly);
+						OMCLogger.debug("Created warp");
+						OMCLogger.debug(h.toString());
+					}
+				} catch (Exception e) {
+					OMCLogger.systemError("invalid configuration for warp : (" + path + ")");
+					OMCLogger.systemError("invalid world");
+					continue;
+				}
+			}catch (Exception e) {
+				OMCLogger.systemError("failed to read warp : (" + path + ")");
 			}
 		}
 	}

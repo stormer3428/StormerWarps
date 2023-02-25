@@ -5,7 +5,7 @@ name: "StormerWarps"
 depend: [ObsidianMC]
 softdepend: [Multiverse-Core]
 api : []
-version: 1.0.20-1.19.3
+version: 1.0.35-1.19.3
 load: POSTWORLD
 commands:
   warp:
@@ -16,5 +16,3 @@ commands:
     description: "Sets your warp"
   delwarp:
     description: "Deletes a warp"
-  stormerwarps:
-  swarps:

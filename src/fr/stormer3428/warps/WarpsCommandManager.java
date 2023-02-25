@@ -21,16 +21,7 @@ public class WarpsCommandManager extends OMCCommandManager{
 			protected ArrayList<String> complete(CommandSender sender, String incomplete) {
 				ArrayList<String> list = new ArrayList<>();
 				final String lower = incomplete.trim().toLowerCase();
-				OMCLogger.debug("Variable completing '" + incomplete +"' with variable " + signature);
-				for(Warp warp : Warp.getWarps(sender.isOp())) {
-					OMCLogger.debug("Variable completing check '" + incomplete +"' '" + warp.getName().toLowerCase() + "'");
-					if(lower.isEmpty() || warp.getName().toLowerCase().startsWith(lower)) {
-						OMCLogger.debug("Success");
-						list.add(warp.getName());
-					}else {
-						OMCLogger.debug("Failed");
-					}
-				}
+				for(Warp warp : Warp.getWarps(sender.isOp() || sender.hasPermission("warp.op"))) if(lower.isEmpty() || warp.getName().toLowerCase().startsWith(lower)) list.add(warp.getName());
 				return list;
 			}
 		});
@@ -60,7 +51,7 @@ public class WarpsCommandManager extends OMCCommandManager{
 				if(!(sender instanceof Player p)) return OMCLogger.error(sender, OMCLang.ERROR_PLAYERONLY.toString());
 				Warp warp = Warp.fromName(vars.get(0));
 				if(warp == null) return OMCLogger.error(sender, Lang.ERROR_NO_WARP.toString().replace("<%WARP>", vars.get(0)));
-				if(warp.isOpOnly() && !p.isOp()) return OMCLogger.error(sender, Lang.ERROR_OPONLY.toString());
+				if(warp.isOpOnly() && !(p.isOp() || p.hasPermission("warp.op"))) return OMCLogger.error(sender, Lang.ERROR_OPONLY.toString());
 				warp.warp(p);
 				return true;
 			}
@@ -71,6 +62,8 @@ public class WarpsCommandManager extends OMCCommandManager{
 			public boolean execute(CommandSender sender, ArrayList<String> vars) {
 				return OMCLogger.error(sender, Lang.ERROR_NOARG_WARP.toString());
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 
 		COMMANDS.add(new OMCCommand("setwarp %V%") {
@@ -81,6 +74,8 @@ public class WarpsCommandManager extends OMCCommandManager{
 				final Warp newWarp = new Warp(p.getLocation(), vars.get(0), false);
 				return OMCLogger.normal(p, Lang.WARP_SET.toString().replace("<%WARP>", newWarp.getName()));
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 
 		COMMANDS.add(new OMCCommand("setwarp %V% %B%") {
@@ -92,6 +87,8 @@ public class WarpsCommandManager extends OMCCommandManager{
 				final Warp newWarp = new Warp(p.getLocation(), vars.get(0), opOnly);
 				return OMCLogger.normal(p, Lang.WARP_SET.toString().replace("<%WARP>", newWarp.getName()));
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 		
 		COMMANDS.add(new OMCCommand("delwarp") {
@@ -99,6 +96,8 @@ public class WarpsCommandManager extends OMCCommandManager{
 			public boolean execute(CommandSender sender, ArrayList<String> vars) {
 				return OMCLogger.error(sender, Lang.ERROR_NOARG_WARP.toString());
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 		
 		COMMANDS.add(new OMCCommand("delwarp %WP%") {
@@ -111,14 +110,18 @@ public class WarpsCommandManager extends OMCCommandManager{
 				warp.delete();
 				return OMCLogger.normal(p, Lang.WARP_REMOVED.toString().replace("<%WARP>", warp.getName()));
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 
-		COMMANDS.add(new OMCCommand("stormerwarps reload") {
+		COMMANDS.add(new OMCCommand("warps reload") {
 			@Override
 			public boolean execute(CommandSender sender, ArrayList<String> vars) {
 				Warps.i.reload();
 				return OMCLogger.normal(sender, Lang.WARPS_RELOAD.toString());
 			}
+
+			@Override public boolean requiresPermission() {return true;}
 		});
 	}
 

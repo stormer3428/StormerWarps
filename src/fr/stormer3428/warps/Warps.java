@@ -35,6 +35,7 @@ public class Warps extends OMCPlugin{
 
 	@Override
 	public void reload() {
+		if(i == null) i = this;
 		Warp.loadFromConfig();
 		super.reload();
 	}

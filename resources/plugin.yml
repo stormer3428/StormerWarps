@@ -16,5 +16,3 @@ commands:
     description: "Sets your warp"
   delwarp:
     description: "Deletes a warp"
-  stormerwarps:
-  swarps:
