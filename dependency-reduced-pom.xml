@@ -4,7 +4,7 @@
   <groupId>fr.stormer3428</groupId>
   <artifactId>StormerWarps</artifactId>
   <name>StormerWarps</name>
-  <version>1.0.6-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
   <description>A simple warps plugin</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -38,13 +38,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
-        <configuration>
-          <outputDirectory>${basedir}/releases/</outputDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>3.3.0</version>
@@ -62,79 +55,47 @@
         <artifactId>versions-maven-plugin</artifactId>
         <version>2.14.2</version>
       </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <options>
+            <option>-allowaccessmodification</option>
+            <option>-keep public class * extends java.applet.Applet{
+							*; }</option>
+            <option>-keepattributes *Annotation*</option>
+            <option>-dontnote</option>
+            <option>-repackageclasses</option>
+            <option>-keep public class * extends
+							fr.stormer3428.obsidianMC.OMCPlugin</option>
+            <option>-keepclassmembers class * extends
+							java.lang.Enum { &lt;fields&gt;; public static **[]
+							values(); public static **
+							valueOf(java.lang.String); }</option>
+            <option>-keepclassmembers
+							@fr.stormer3428.obsidianMC.Config.AutoConfig class *
+							{ @fr.stormer3428.obsidianMC.Config.* public static
+							&lt;fields&gt;; }</option>
+            <option>-keepclassmembers class * extends
+							org.bukkit.event.Listener {
+							@org.bukkit.event.EventHandler &lt;methods&gt;; }</option>
+          </options>
+          <libs>
+            <lib>/home/stormer3428/jmods/java.base.jmod</lib>
+          </libs>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>bump-patch</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>versions-maven-plugin</artifactId>
-            <version>2.14.2</version>
-            <executions>
-              <execution>
-                <phase>validate</phase>
-                <goals>
-                  <goal>set</goal>
-                </goals>
-                <configuration>
-                  <newVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT</newVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>bump-minor</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>versions-maven-plugin</artifactId>
-            <version>2.14.2</version>
-            <executions>
-              <execution>
-                <phase>validate</phase>
-                <goals>
-                  <goal>set</goal>
-                </goals>
-                <configuration>
-                  <newVersion>${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0-SNAPSHOT</newVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>bump-major</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>versions-maven-plugin</artifactId>
-            <version>2.14.2</version>
-            <executions>
-              <execution>
-                <phase>validate</phase>
-                <goals>
-                  <goal>set</goal>
-                </goals>
-                <configuration>
-                  <newVersion>${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT</newVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <repositories>
     <repository>
       <id>spigot-repo</id>
@@ -145,7 +106,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.19.3-R0.1-SNAPSHOT</version>
+      <version>1.20.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -155,6 +116,10 @@
         <exclusion>
           <artifactId>gson</artifactId>
           <groupId>com.google.code.gson</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>joml</artifactId>
+          <groupId>org.joml</groupId>
         </exclusion>
         <exclusion>
           <artifactId>bungeecord-chat</artifactId>

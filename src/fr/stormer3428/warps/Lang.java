@@ -6,8 +6,7 @@ import java.io.IOException;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import fr.stormer3428.obsidianMC.OMCLogger;
-import fr.stormer3428.obsidianMC.OMCPlugin;
+import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public enum Lang {
 
@@ -62,7 +61,7 @@ public enum Lang {
 	}
 
 	public static void loadFromConfig() {
-		File lang = new File(OMCPlugin.i.getDataFolder(), "lang.yml");
+		File lang = new File(Warps.i.getDataFolder(), "lang.yml");
 		YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(lang);
 		if(!lang.exists()) try {
 			langConfig.save(lang);
@@ -70,7 +69,7 @@ public enum Lang {
 			e.printStackTrace();
 			OMCLogger.systemError("Failed to create language file");
 			OMCLogger.systemError("Disabling...");
-			OMCPlugin.i.getServer().getPluginManager().disablePlugin(OMCPlugin.i);
+			Warps.i.getServer().getPluginManager().disablePlugin(Warps.i);
 		}
 		for(Lang l : Lang.values()) if(langConfig.getString(l.getPath()) == null) langConfig.set(l.getPath(), l.getDef());
 		Lang.setFile(langConfig);
@@ -80,7 +79,7 @@ public enum Lang {
 			e.printStackTrace();
 			OMCLogger.systemError("Failed to save language file");
 			OMCLogger.systemError("Disabling...");
-			OMCPlugin.i.getServer().getPluginManager().disablePlugin(OMCPlugin.i);
+			Warps.i.getServer().getPluginManager().disablePlugin(Warps.i);
 		}
 	}
 }

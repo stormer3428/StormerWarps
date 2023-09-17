@@ -8,11 +8,11 @@ import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import fr.stormer3428.obsidianMC.OMCLogger;
-import fr.stormer3428.obsidianMC.OMCPlugin;
+import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public class Warp {
 
@@ -46,7 +46,7 @@ public class Warp {
 	private static void saveToConfig(Warp warp) {
 		OMCLogger.debug("saving to config : " + warp);
 		String path = "warps." + warp.name + ".";
-		FileConfiguration config = OMCPlugin.i.getConfig();
+		FileConfiguration config = Warps.i.getConfig();
 		OMCLogger.debug("config : " + config);
 		config.set(path + "x", warp.location.getX());
 		config.set(path + "y", warp.location.getY());
@@ -55,13 +55,13 @@ public class Warp {
 		config.set(path + "pitch", warp.location.getPitch());
 		config.set(path + "world", warp.location.getWorld().getName());
 		config.set(path + "opOnly", warp.opOnly);
-		OMCPlugin.i.loadConfig();
+		Warps.i.loadConfig();
 	}
 
 	public static void deleteWarp(Warp warp) {
 		String path = "warps." + warp.name;
-		OMCPlugin.i.getConfig().set(path, null);
-		OMCPlugin.i.loadConfig();
+		Warps.i.getConfig().set(path, null);
+		Warps.i.loadConfig();
 		all.remove(warp);
 	}
 
@@ -121,11 +121,17 @@ public class Warp {
 	public static void loadFromConfig() {
 		OMCLogger.debug("loading warps from config");
 		Warp.all.clear();
-		FileConfiguration config = OMCPlugin.i.getConfig();
-
+		FileConfiguration config = Warps.i.getConfig();
+		
 		OMCLogger.debug("config : " + config);
+		
+		ConfigurationSection warpsSection = config.getConfigurationSection("warps");
+		if(warpsSection == null) {
+			OMCLogger.debug("no warps section found");
+			return;
+		}
 		OMCLogger.debug("looping through keys");
-		for(String warp : config.getKeys(false)) {
+		for(String warp : warpsSection.getKeys(false)) {
 			String path = "warps." + warp + ".";
 			try {
 

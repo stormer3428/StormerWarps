@@ -2,7 +2,6 @@ api-version : 1.16
 main: fr.stormer3428.warps.Warps
 author: stormer3428
 name: "StormerWarps"
-depend: [ObsidianMC]
 softdepend: [Multiverse-Core]
 api : []
 version: ${project.version}

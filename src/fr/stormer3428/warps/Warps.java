@@ -1,13 +1,17 @@
 package fr.stormer3428.warps;
 
-import fr.stormer3428.obsidianMC.OMCLogger;
 import fr.stormer3428.obsidianMC.OMCPlugin;
+import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public class Warps extends OMCPlugin{
 
 	WarpsCommandManager commandManager = new WarpsCommandManager();
 
 	public static Warps i;
+	
+	public Warps() {
+		Warps.i = this;
+	}
 	
 	@Override
 	public void loadLangFromConfig() {
@@ -21,7 +25,6 @@ public class Warps extends OMCPlugin{
 
 	@Override
 	public void onObsidianEnable() {
-		i = this;
 		Warp.loadFromConfig();
 	}
 
@@ -35,9 +38,13 @@ public class Warps extends OMCPlugin{
 
 	@Override
 	public void reload() {
-		if(i == null) i = this;
 		Warp.loadFromConfig();
 		super.reload();
+	}
+	
+	public void loadConfig() {
+		getConfig().options().copyDefaults(true);
+		saveConfig();
 	}
 
 }
