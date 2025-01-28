@@ -1,7 +1,7 @@
 package fr.stormer3428.warps;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public class Warps extends OMCPlugin{
 

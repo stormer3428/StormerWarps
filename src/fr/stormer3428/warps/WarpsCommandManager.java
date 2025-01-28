@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 import fr.stormer3428.obsidianMC.Command.OMCCommand;
 import fr.stormer3428.obsidianMC.Command.OMCVariable;
 import fr.stormer3428.obsidianMC.Manager.OMCCommandManager;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public class WarpsCommandManager extends OMCCommandManager{
 
